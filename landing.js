@@ -149,8 +149,9 @@ function doJoin(options) {
     let cSessionName = "piix-" + options.sessionName;
 
     makeMain("boards.start", {
-        appId: "io.croquet.vdom.wrappedPublicPiix",
+        appId: "io.croquet.vdom.public.wrappedPiix",
         apiKey: apiKey,
+        password: Croquet.App.autoPassword(),
         eventRateLimit: 60}, library, cSessionName, null, true)();
 }
 
