@@ -23,25 +23,28 @@ port = process.argv[2] ? parseInt(process.argv[2], 0) : port;
 
 function fileTypes(name) {
     if (name.endsWith(".mjs")) {
-       return "application/javascript";
+        return "application/javascript";
     }
     if (name.endsWith(".js")) {
-       return "application/javascript";
+        return "application/javascript";
     }
     if (name.endsWith(".css")) {
-       return "text/css";
+        return "text/css";
     }
     if (name.endsWith(".png")) {
-       return "image/png";
+        return "image/png";
     }
     if (name.endsWith(".svg")) {
-       return "image/svg+xml";
+        return "image/svg+xml";
     }
     if (name.endsWith(".html")) {
-       return "text/html";
+        return "text/html";
     }
     if (name.endsWith(".pdf")) {
-       return "application/pdf";
+        return "application/pdf";
+    }
+    if (name.endsWith(".wasm")) {
+        return "application/wasm";
     }
     return "application/octet-stream";
 }
@@ -185,13 +188,25 @@ function propfind(request, response, pathname) {
             response.setHeader('Content-Type', 'text/plain');
             response.end(JSON.stringify(list));
         });
-  });
+    });
 }
 
 function handleRequest(request, response) {
     let urlObject = urlParser.parse(request.url, true);
     let pathname = decodeURIComponent(urlObject.pathname);
     let method = request.method;
+
+    if (method === "GET" && pathname.endsWith("/")) {
+        pathname += "index.html";
+    }
+
+    let filePath = path.join(currentDir, pathname);
+    let normalized = path.dirname(path.normalize(filePath));
+    if (normalized.slice(0, currentDir.length) !== currentDir) {
+        response.writeHead(403, {});
+        response.end();
+        return;
+    }
 
     console.log(`[${(new Date()).toUTCString()}] "${method} ${pathname}"`);
     if (method === 'GET') {
