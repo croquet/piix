@@ -153,6 +153,11 @@ class DrawingBackgroundView {
         }, 5000);
     }
 
+    getMySize() {
+        let rect = this.dom.parentNode.parentNode.getBoundingClientRect();
+        return {width: rect.width, height: rect.height};
+    }
+
     showDrawing(data) {
         let {translation, width, height, key} = data;
         let canvas = this.canvas;
@@ -171,7 +176,7 @@ class DrawingBackgroundView {
     }
 
     resizeImage(width, height) {
-        let rect = this.dom.parentNode.getBoundingClientRect();
+        let rect = this.getMySize();
         let scale = Math.min(rect.width / width, rect.height / height);
 
         this.scale = scale;
@@ -191,7 +196,7 @@ class DrawingBackgroundView {
         let tx;
         let ty;
         let scale = this.scale;
-        let rect = this.dom.parentNode.getBoundingClientRect();
+        let rect = this.getMySize();
         tx = (rect.width - scale * width) / 2;
         ty = (rect.height - scale * height) / 2;
         this.translation = {x: tx, y: ty};
